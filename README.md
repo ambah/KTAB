@@ -75,7 +75,7 @@ For authoritative ruling on licensing issues, consult appropriate counsel.
 
 ## Data Input Formats ##
 
-To read and write XML data files, KTAB is being converted to use the [TinyXML2](https://github.com/leethomason/tinyxml2) library, which is available on [GitHub](https://github.com/).
+To read and write XML data files, KTAB uses the [TinyXML2](https://github.com/leethomason/tinyxml2) library, which is available on [GitHub](https://github.com/).
 
 
 ## Contributing and License Information ##
