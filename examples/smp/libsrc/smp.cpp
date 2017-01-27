@@ -742,7 +742,8 @@ tuple< KMatrix, VUI> SMPState::pDist(int persp) const {
     /// Calculate the probability distribution over states from this perspective
 
     // TODO: convert this to a single, commonly used setup function
-    const VotingRule vr = VotingRule::Proportional;
+    auto smod = (const SMPModel*)model;
+    const VotingRule vr = smod->vrCltn;
     const ReportingLevel rl = ReportingLevel::Silent;
 
     const unsigned int na = model->numAct;
