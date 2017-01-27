@@ -1439,7 +1439,8 @@ double SMPModel::getQuadMapPoint(string dbname, string scenarioID, size_t turn, 
 
     // Get voting rule and third party commit for this scenario
     string query = "SELECT VotingRule, ThirdPartyCommit FROM ScenarioDesc WHERE ScenarioId=\'" + scenarioID + "\'";
-    assert(SQLITE_OK == sqlExec(query));
+    int rc = sqlExec(query);
+    assert(SQLITE_OK == rc);
     assert(fieldVals.size() == 2 );
 
     //voting rule
@@ -1450,17 +1451,29 @@ double SMPModel::getQuadMapPoint(string dbname, string scenarioID, size_t turn, 
     int tpc = stoi(fieldVals[1]);
     ThirdPartyCommit tpCommit = static_cast<ThirdPartyCommit>(tpc);
 
-    assert(SQLITE_OK == sqlExec(getUtilQuery(init_i, init_i)));    double uii = stod(fieldVals[0]);
+    rc = sqlExec(getUtilQuery(init_i, init_i));
+    assert(SQLITE_OK == rc);
+    double uii = stod(fieldVals[0]);
 
-    assert(SQLITE_OK == sqlExec(getUtilQuery(init_i, rcvr_j)));    double uij = stod(fieldVals[0]);
+    rc = sqlExec(getUtilQuery(init_i, rcvr_j));
+    assert(SQLITE_OK == rc);
+    double uij = stod(fieldVals[0]);
 
-    assert(SQLITE_OK == sqlExec(getUtilQuery(rcvr_j, init_i)));    double uji = stod(fieldVals[0]);
+    rc = sqlExec(getUtilQuery(rcvr_j, init_i));
+    assert(SQLITE_OK == rc);
+    double uji = stod(fieldVals[0]);
 
-    assert(SQLITE_OK == sqlExec(getUtilQuery(rcvr_j, rcvr_j)));    double ujj = stod(fieldVals[0]);
+    rc = sqlExec(getUtilQuery(rcvr_j, rcvr_j));
+    assert(SQLITE_OK == rc);
+    double ujj = stod(fieldVals[0]);
 
-    assert(SQLITE_OK == sqlExec(getUtilQuery(aff_k, init_i)));    double uki = stod(fieldVals[0]);
+    rc = sqlExec(getUtilQuery(aff_k, init_i));
+    assert(SQLITE_OK == rc);
+    double uki = stod(fieldVals[0]);
 
-    assert(SQLITE_OK == sqlExec(getUtilQuery(aff_k, rcvr_j)));    double ukj = stod(fieldVals[0]);
+    rc = sqlExec(getUtilQuery(aff_k, rcvr_j));
+    assert(SQLITE_OK == rc);
+    double ukj = stod(fieldVals[0]);
 
     double euSQ = uki + ukj;
 
@@ -1470,13 +1483,23 @@ double SMPModel::getQuadMapPoint(string dbname, string scenarioID, size_t turn, 
     double uhkji = 2 * ukj;
     assert((0.0 <= uhkji) && (uhkji <= 2.0));
 
-    assert(SQLITE_OK == sqlExec(getVSalQuery(init_i)));    double si = stod(fieldVals[0]);
+    rc = sqlExec(getVSalQuery(init_i));
+    assert(SQLITE_OK == rc);
+    double si = stod(fieldVals[0]);
     assert((0 < si) && (si <= 1));
-    assert(SQLITE_OK == sqlExec(getVSalQuery(rcvr_j)));    double sj = stod(fieldVals[0]);
+    
+    rc = sqlExec(getVSalQuery(rcvr_j));
+    assert(SQLITE_OK == rc);
+    double sj = stod(fieldVals[0]);
     assert((0 < sj) && (sj <= 1));
 
-    assert(SQLITE_OK == sqlExec(getSCapQuery(init_i)));    double ci = stod(fieldVals[0]);
-    assert(SQLITE_OK == sqlExec(getSCapQuery(rcvr_j)));    double cj = stod(fieldVals[0]);
+    rc = sqlExec(getSCapQuery(init_i));
+    assert(SQLITE_OK == rc);
+    double ci = stod(fieldVals[0]);
+
+    rc = sqlExec(getSCapQuery(rcvr_j));
+    assert(SQLITE_OK == rc);
+    double cj = stod(fieldVals[0]);
 
     auto contribs = calcContribs(vrCltn, si*ci, sj*cj, tuple<double, double, double, double>(uii,uij,uji,ujj));
 
@@ -1489,7 +1512,9 @@ double SMPModel::getQuadMapPoint(string dbname, string scenarioID, size_t turn, 
 
     // Get count of actors for this scenario
     query = "SELECT MAX(Act_i) FROM ActorDescription WHERE ScenarioId=\'" + scenarioID + "\'";
-    assert(SQLITE_OK == sqlExec(query));    size_t numAct = stoul(fieldVals[0])+1;
+    rc = sqlExec(query);
+    assert(SQLITE_OK == rc);
+    size_t numAct = stoul(fieldVals[0])+1;
 
     // we assess the overall coalition strengths by adding up the contribution of
     // individual actors (including i and j, above). We assess the contribution of third
@@ -1497,15 +1522,25 @@ double SMPModel::getQuadMapPoint(string dbname, string scenarioID, size_t turn, 
     for (size_t n = 0; n < numAct; n++) {
         if ((n != init_i) && (n != rcvr_j)) { // already got their influence-contributions
 
-            assert(SQLITE_OK == sqlExec(getVSalQuery(n)));    double sn = stod(fieldVals[0]);
+            rc = sqlExec(getVSalQuery(n));
+            assert(SQLITE_OK == rc);
+            double sn = stod(fieldVals[0]);
 
-            assert(SQLITE_OK == sqlExec(getSCapQuery(n)));    double cn = stod(fieldVals[0]);
+            rc = sqlExec(getSCapQuery(n));
+            assert(SQLITE_OK == rc);
+            double cn = stod(fieldVals[0]);
 
-            assert(SQLITE_OK == sqlExec(getUtilQuery(n, init_i)));    double uni = stod(fieldVals[0]);
+            rc = sqlExec(getUtilQuery(n, init_i));
+            assert(SQLITE_OK == rc);
+            double uni = stod(fieldVals[0]);
 
-            assert(SQLITE_OK == sqlExec(getUtilQuery(n, rcvr_j)));    double unj = stod(fieldVals[0]);
+            rc = sqlExec(getUtilQuery(n, rcvr_j));
+            assert(SQLITE_OK == rc);
+            double unj = stod(fieldVals[0]);
 
-            assert(SQLITE_OK == sqlExec(getUtilQuery(n, n)));    double unn = stod(fieldVals[0]);
+            rc = sqlExec(getUtilQuery(n, n));
+            assert(SQLITE_OK == rc);
+            double unn = stod(fieldVals[0]);
 
             // notice that each third party starts afresh,
             // considering only contributions of principals and itself
